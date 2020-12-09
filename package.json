@@ -1,0 +1,27 @@
+{
+  "name": "wolf.js",
+  "version": "1.0.0",
+  "description": "The Worlds Online Festival API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christopher-wolflive/wolf.js.git"
+  },
+  "keywords": [
+    "WOLF",
+    "WOLF.LIVE",
+    "Palringo"
+  ],
+  "author": "Christopher <christopher.koster@wolf.live>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/christopher-wolflive/wolf.js/issues"
+  },
+  "homepage": "https://github.com/christopher-wolflive/wolf.js#readme",
+  "dependencies": {
+    "socket.io-client": "2.3.1"
+  }
+}
