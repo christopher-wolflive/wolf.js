@@ -36,7 +36,8 @@ class Bot extends Client {
                 Trigger: cmd.Trigger,
                 Group: cmd.Group,
                 Private: cmd.Private,
-                Both: cmd.Both
+                Both: cmd.Both,
+                RequiredRole: cmd.RequiredRole
             });
         });
     }
