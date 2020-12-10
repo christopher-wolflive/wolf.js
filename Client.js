@@ -2,6 +2,7 @@ const { GenerateToken, entityInCache, entitiesInCache, updateValues } = require(
 const { Events } = require('./Helpers');
 const { Socket } = require('./Network');
 const { User, Group, Message } = require('./Models');
+const { HandleLoginSuccess, HandleMessageSend, HandleReconnected } = require('./Handlers');
 
 class Client {
     Groups;
@@ -23,76 +24,10 @@ class Client {
         this.Socket = new Socket(this);
         this.On = new Events(this);
 
-        this.On.LoginSuccess = async (user) => {
-            // Subscribe to Messages
-            await this.Socket.RequestSubscribeToMessages('group');
-            await this.Socket.RequestSubscribeToMessages('private');
+        HandleLoginSuccess(this);
+        HandleReconnected(this);
 
-            // Get Contacts
-            let contacts = await this.Socket.RequestSubscriberTypeList('contact');
-            await this.GetUsers(...contacts.map(t => t['id']));
-
-            // Get Groups
-            let groups = await this.Socket.RequestSubscriberTypeList('group');
-            await this.GetGroups(...groups.map(t => t['id']));
-        }
-
-        this.On.Reconnected = async () => {
-            // Resubscribe to Message
-            await this.Socket.RequestSubscribeToMessages('group');
-            await this.Socket.RequestSubscribeToMessages('private');
-
-            // Resubscribe to Fetched Users
-            await this.GetUsers(...this.Users.map(t => t.Id));
-
-            // Resubscribe to Fetched Groups
-            await this.GetGroups(...this.Groups.map(t => t.Id));
-        }
-
-        this.Socket.IO.on('message send', (data) => {
-            let mesg = new Message(data.body);
-            
-            // Process Group Admin Actions
-            if (mesg.MimeType === 'application/palringo_group_action') {
-                return;
-            }
-
-            this.On.EE.emit('message send', mesg);
-        });
-
-        this.Socket.IO.on('subscriber update', async (data) => {
-            console.log(data);
-            const { id, hash } = data.body;
-
-            let user = entityInCache(this.Users, 'Id', id);
-
-            if (!user.cached)
-                return this.GetUser(id);
-
-            if (user.value['Hash'] === hash)
-                return;
-
-            let updatedUser = await this.Socket.RequestUserById(id);
-
-            updateValues(this.Users, 'Id', id, updatedUser);
-        });
-
-        this.Socket.IO.on('group update', async (data) => {
-            console.log(data);
-            const { id, hash } = data.body;
-
-            let group = entityInCache(this.Groups, 'Id', id);
-
-            if (!group.cached)
-                return this.GetGroup(id);
-
-            if (group.value['Hash'] === hash)
-                return;
-
-            let updatedGroup = new Group(await this.Socket.RequestGroupById(id));
-
-            updateValues(this.Groups, 'Id', id, updatedGroup);
-        });
+        this.Socket.HandleSocketEvents(this);
     }
 
     /**
