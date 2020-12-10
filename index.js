@@ -5,6 +5,7 @@ const CommandContext = require('./Commands/CommandContext');
 const Group = require('./Models/Group');
 const Message = require('./Models/Message');
 const User = require('./Models/User');
+const GroupRole = require('./Enums/GroupRole');
 
 module.exports = {
     Bot,
@@ -12,6 +13,7 @@ module.exports = {
     Command,
     CommandContext,
     Group,
+    GroupRole,
     Message,
     User
 }
