@@ -1,7 +1,7 @@
 const { GenerateToken, entityInCache, entitiesInCache, updateValues } = require('./Constants');
 const { Events } = require('./Helpers');
 const { Socket } = require('./Network');
-const { User, Group } = require('./Models');
+const { User, Group, Message } = require('./Models');
 
 class Client {
     Groups;
@@ -22,6 +22,44 @@ class Client {
         this.Token = GenerateToken(1024);
         this.Socket = new Socket(this);
         this.On = new Events(this);
+
+        this.On.LoginSuccess = async (user) => {
+            // Subscribe to Messages
+            await this.Socket.RequestSubscribeToMessages('group');
+            await this.Socket.RequestSubscribeToMessages('private');
+
+            // Get Contacts
+            let contacts = await this.Socket.RequestSubscriberTypeList('contact');
+            await this.GetUsers(...contacts.map(t => t['id']));
+
+            // Get Groups
+            let groups = await this.Socket.RequestSubscriberTypeList('group');
+            await this.GetGroups(...groups.map(t => t['id']));
+        }
+
+        this.On.Reconnected = async () => {
+            // Resubscribe to Message
+            await this.Socket.RequestSubscribeToMessages('group');
+            await this.Socket.RequestSubscribeToMessages('private');
+
+            // Resubscribe to Fetched Users
+            await this.GetUsers(...this.Users.map(t => t.Id));
+
+            // Resubscribe to Fetched Groups
+            await this.GetGroups(...this.Groups.map(t => t.Id));
+        }
+
+        this.Socket.IO.on('message send', (data) => {
+            let mesg = new Message(data.body);
+            
+            // Process Group Admin Actions
+            if (mesg.MimeType === 'application/palringo_group_action')
+            {
+                return;    
+            }
+
+            this.On.EE.emit('message send', mesg);
+        })
     }
 
     /**
@@ -81,8 +119,6 @@ class Client {
         if (uncached.length > 0) {
             let fetched = await this.Socket.RequestGroupsById(uncached);
             let parsed = fetched.map(t => new Group(t));
-
-            console.log(parsed);
 
             this.Groups.push(...parsed);
             

@@ -1,6 +1,6 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
-const { User } = require('../Models');
+const { User, Message } = require('../Models');
 
 class Events {
     Client;
@@ -50,6 +50,11 @@ class Events {
      * @param {() => void} fn
      */
     set LogoutFailed(fn) { this.EE.on('security logout failed', fn); }
+
+    /**
+     * @param {(message: Message) => void} fn
+     */
+    set MessageRecieved(fn) { this.EE.on('message send', fn); }
 }
 
 module.exports = {

@@ -151,6 +151,22 @@ class Socket {
 
         return responses;
     }
+
+    /**
+     * Subscribe to Message Type
+     * @param {'group' | 'private'} type
+     */
+    RequestSubscribeToMessages = async (type) => {
+        return await this.Request(`message ${type} subscribe`);
+    }
+
+    /**
+     * Get A List of Certain Type
+     * @param {'contact' | 'group'} type 
+     */
+    RequestSubscriberTypeList = async (type) => {
+        return await this.Request(`subscriber ${type} list`);
+    }
 }
 
 module.exports = {
