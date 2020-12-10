@@ -141,7 +141,7 @@ class Socket {
                 body: {
                     idList: ids.slice(i, i + chunkSize),
                     extended: true,
-                    subscribe: false
+                    subscribe: true
                 }
             });
 

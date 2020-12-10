@@ -18,7 +18,7 @@ class Bot extends Client {
                 return;
             
             let user = await this.GetUser(mesg.Originator);
-            let group = await mesg.IsGroup ? this.GetGroup(mesg.Recipient) : new Group({});
+            let group = mesg.IsGroup ? await this.GetGroup(mesg.Recipient) : new Group({});
             let remainder = mesg.Content.substring(command.Trigger.length).trim();
 
             let context = new CommandContext(this, mesg, user, group, remainder);

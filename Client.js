@@ -53,13 +53,46 @@ class Client {
             let mesg = new Message(data.body);
             
             // Process Group Admin Actions
-            if (mesg.MimeType === 'application/palringo_group_action')
-            {
-                return;    
+            if (mesg.MimeType === 'application/palringo_group_action') {
+                return;
             }
 
             this.On.EE.emit('message send', mesg);
-        })
+        });
+
+        this.Socket.IO.on('subscriber update', async (data) => {
+            console.log(data);
+            const { id, hash } = data.body;
+
+            let user = entityInCache(this.Users, 'Id', id);
+
+            if (!user.cached)
+                return this.GetUser(id);
+
+            if (user.value['Hash'] === hash)
+                return;
+
+            let updatedUser = await this.Socket.RequestUserById(id);
+
+            updateValues(this.Users, 'Id', id, updatedUser);
+        });
+
+        this.Socket.IO.on('group update', async (data) => {
+            console.log(data);
+            const { id, hash } = data.body;
+
+            let group = entityInCache(this.Groups, 'Id', id);
+
+            if (!group.cached)
+                return this.GetGroup(id);
+
+            if (group.value['Hash'] === hash)
+                return;
+
+            let updatedGroup = new Group(await this.Socket.RequestGroupById(id));
+
+            updateValues(this.Groups, 'Id', id, updatedGroup);
+        });
     }
 
     /**
