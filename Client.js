@@ -93,6 +93,28 @@ class Client {
         this.Users.push(user);
         return user;
     }
+
+    /**
+     * Get Groups By ID
+     * @param {number} id
+     * @returns {User[]}
+     */
+    GetUsers = async (...ids) => {
+        let search = entitiesInCache(this.Users, 'Id', ids);
+        let users = search.filter(t => t.cached).map(t => t.value);
+        let uncached = search.filter(t => !t.cached).map(t => t['id']);
+
+        if (uncached.length > 0) {
+            let fetched = await this.Socket.RequestUsersById(uncached);
+            let parsed = fetched.map(t => new User(t));
+
+            this.Users.push(...parsed);
+            
+            users.push(...fetched.map(t => new User(t)));
+        }
+
+        return users;
+    }
 }
 
 module.exports = Client;

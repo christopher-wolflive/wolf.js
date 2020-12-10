@@ -27,7 +27,7 @@ let entitiesInCache = (cache, key, values) => {
 
     return values.map(t => {
         return {
-            [key.toLowerCase()]: value,
+            [key.toLowerCase()]: t,
             cached: cachedValues.includes(t),
             value: cache.find(x => x[key] === t)
         }

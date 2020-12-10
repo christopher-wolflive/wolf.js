@@ -38,7 +38,7 @@ class Socket {
                 if (resp.code && resp.code >= 200 && resp.code <= 299)
                     resolve(resp.body ?? resp);
                 else
-                    reject(res);
+                    reject(resp);
             });
         });
     }
@@ -113,7 +113,9 @@ class Socket {
      */
     RequestUserById = async (id) => {
         return this.Request('subscriber profile', {
-            headers: {},
+            headers: {
+                version: 4
+            },
             body: {
                 id,
                 extended: true,
@@ -122,10 +124,31 @@ class Socket {
         });
     }
 
-    RequestUsersById = async (id) => {
-        return this.Request('subscriber profile', {
+    /**
+     * Request Users by ID
+     * @param {number[]} ids 
+     */
+    RequestUsersById = async (ids) => {
+        let responses = [];
+        let chunkSize = 3;
 
-        });
+        for (let i = 0; i < ids.length; i += chunkSize) {
+            let response = await this.Request('subscriber profile', {
+                headers: {
+                    version: 4
+                },
+                body: {
+                    idList: ids.slice(i, i + chunkSize),
+                    extended: true,
+                    subscribe: false
+                }
+            });
+
+            let users = Object.values(response).filter(t => t.code === 200).map(t => t.body);
+            responses.push(...users);
+        }
+
+        return responses;
     }
 }
 
