@@ -1,5 +1,6 @@
 const io = require('socket.io-client');
 const Client = require('../Client');
+const { HandleMessageSend, HandleSubscriberUpdate, HandleGroupUpdate } = require('../Handlers');
 
 class Socket {
     Client;
@@ -18,6 +19,16 @@ class Socket {
                 token: this.Client.Token
             }
         });
+    }
+
+    /**
+     * 
+     * @param {Client} client 
+     */
+    HandleSocketEvents = async client => {
+        HandleMessageSend(client);
+        HandleSubscriberUpdate(client);
+        HandleGroupUpdate(client);
     }
 
     /**
@@ -150,22 +161,6 @@ class Socket {
         }
 
         return responses;
-    }
-
-    /**
-     * Subscribe to Message Type
-     * @param {'group' | 'private'} type
-     */
-    RequestSubscribeToMessages = async (type) => {
-        return await this.Request(`message ${type} subscribe`);
-    }
-
-    /**
-     * Get A List of Certain Type
-     * @param {'contact' | 'group'} type 
-     */
-    RequestSubscriberTypeList = async (type) => {
-        return await this.Request(`subscriber ${type} list`);
     }
 
     /**
