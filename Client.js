@@ -1,7 +1,7 @@
 const { GenerateToken, entityInCache, entitiesInCache, updateValues } = require('./Constants');
 const { Events } = require('./Helpers');
 const { Socket } = require('./Network');
-const { User } = require('./Models');
+const { User, Group } = require('./Models');
 
 class Client {
     Groups;
@@ -14,7 +14,7 @@ class Client {
     /**
      * 
      * @param {User[]} userCache 
-     * @param {any[]} groupCache 
+     * @param {Group[]} groupCache 
      */
     constructor(userCache = [], groupCache = []) {
         this.Users = userCache;
@@ -63,20 +63,33 @@ class Client {
         if (search.cached)
             return search.value;
         
-        try {
-            let fetchedGroup = await this.Socket.RequestGroupById(id);
-            console.log(fetchedGroup);
-        } catch {
-            return null;
-        }
+        let group = new Group(await this.Socket.RequestGroupById(id));
+        this.Groups.push(group);
+        return group;
     }
 
     /**
      * Get Groups By ID
      * @param {...number} ids
+     * @returns {Group[]}
      */
     GetGroups = async (...ids) => {
-        let serach = entitiesInCache(this.Groups, 'Id', id);
+        let serach = entitiesInCache(this.Groups, 'Id', ids);
+        let groups = serach.filter(t => t.cached).map(t => t.value);
+        let uncached = serach.filter(t => !t.cached).map(t => t['id']);
+
+        if (uncached.length > 0) {
+            let fetched = await this.Socket.RequestGroupsById(uncached);
+            let parsed = fetched.map(t => new Group(t));
+
+            console.log(parsed);
+
+            this.Groups.push(...parsed);
+            
+            groups.push(...parsed);
+        }
+
+        return groups;
     }
 
     /**
@@ -109,8 +122,8 @@ class Client {
             let parsed = fetched.map(t => new User(t));
 
             this.Users.push(...parsed);
-            
-            users.push(...fetched.map(t => new User(t)));
+
+            users.push(...parsed);
         }
 
         return users;

@@ -101,7 +101,8 @@ class Socket {
                 }
             });
 
-            console.log(response);
+            let groups = Object.values(response).filter(t => t.code === 200).map(t => t.body);
+            responses.push(...groups);
         }
 
         return responses;
@@ -130,7 +131,7 @@ class Socket {
      */
     RequestUsersById = async (ids) => {
         let responses = [];
-        let chunkSize = 3;
+        let chunkSize = 50;
 
         for (let i = 0; i < ids.length; i += chunkSize) {
             let response = await this.Request('subscriber profile', {
