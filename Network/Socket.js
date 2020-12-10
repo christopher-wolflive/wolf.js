@@ -1,6 +1,6 @@
 const io = require('socket.io-client');
 const Client = require('../Client');
-const { HandleMessageSend, HandleSubscriberUpdate, HandleGroupUpdate } = require('../Handlers');
+const { HandleMessageSend, HandleSubscriberUpdate, HandleGroupUpdate, HandleGroupMember } = require('../Handlers');
 
 class Socket {
     Client;
@@ -29,6 +29,7 @@ class Socket {
         HandleMessageSend(client);
         HandleSubscriberUpdate(client);
         HandleGroupUpdate(client);
+        HandleGroupMember(client);
     }
 
     /**
@@ -117,6 +118,22 @@ class Socket {
         }
 
         return responses;
+    }
+
+    /**
+     * Request Group Members List
+     * @param {number} id 
+     */
+    RequestGroupMemberList = async (id) => {
+        return await this.Request('group member list', {
+            headers: {
+                version: 3
+            },
+            body: {
+                id,
+                subscribe: true
+            }
+        });
     }
 
     /**

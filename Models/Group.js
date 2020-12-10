@@ -1,4 +1,5 @@
 const { AssignValues } = require('../Constants');
+const GroupMember = require('./GroupMember');
 
 module.exports = class Group {
     Id = -1;
@@ -23,8 +24,18 @@ module.exports = class Group {
     Langauge = 1;
     AudioConfig = new GroupAudioConfig({});
     AudioCounts = new GroupAudioCounts({});
+    MemberList;
+    MemberListLoaded = false;
 
-    constructor(obj) {
+    /**
+     * 
+     * @param {*} obj 
+     * @param {GroupMember[]} groupMembers 
+     */
+    constructor(obj, groupMembers = []) {
+
+        this.MemberList = groupMembers;
+
         const { base, extended, audioConfig, audioCounts } = obj;
 
         if (base)

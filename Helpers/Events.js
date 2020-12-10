@@ -56,4 +56,9 @@ module.exports = class Events {
      * @param {(message: Message) => void} fn
      */
     set MessageRecieved(fn) { this.EE.on('message send', fn); }
+
+    /**
+     * @param {(update: GroupMemberUpdate) => void} fn
+     */
+    set GroupAction(fn) { this.EE.on('group action', fn); }
 }
