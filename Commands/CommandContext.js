@@ -1,7 +1,9 @@
 const Client = require('../Client');
-const { Message, User, Group } = require('../Models');
+const Group = require('../Models/Group');
+const Message = require('../Models/Message');
+const User = require('../Models/User');
 
-class CommandContext {
+module.exports = class CommandContext {
     Client;
     Message;
     User;
@@ -35,8 +37,4 @@ class CommandContext {
             this.Message.IsGroup
         );
     }
-}
-
-module.exports = {
-    CommandContext
 }

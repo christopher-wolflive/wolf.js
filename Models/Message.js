@@ -1,6 +1,6 @@
 const { AssignValues } = require('../Constants');
 
-class Message {
+module.exports = class Message {
     Id = '';
     Recipient = -1;
     Originator = -1;
@@ -15,8 +15,4 @@ class Message {
         obj && AssignValues(this, obj);
         this.Content = this.Data.toString('utf8');
     }
-}
-
-module.exports = {
-    Message
 }

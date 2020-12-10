@@ -1,7 +1,10 @@
 const Bot = require('./Bot');
 const Client = require('./Client');
-const { Command, CommandContext } = require('./Commands');
-const { User, Group, Message } = require('./Models');
+const Command = require('./Commands/Command');
+const CommandContext = require('./Commands/CommandContext');
+const Group = require('./Models/Group');
+const Message = require('./Models/Message');
+const User = require('./Models/User');
 
 module.exports = {
     Bot,

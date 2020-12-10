@@ -1,5 +1,5 @@
 const Client = require('../Client');
-const { Message } = require('../Models');
+const Message = require('../Models/Message');
 
 /**
  * 

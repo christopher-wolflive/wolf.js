@@ -1,3 +1,4 @@
+const HandleGroupMember = require('./HandleGroupMember');
 const HandleGroupUpdate = require('./HandleGroupUpdate');
 const HandleLoginSuccess = require('./HandleLoginSuccess');
 const HandleMessageSend = require('./HandleMessageSend');
@@ -6,6 +7,7 @@ const HandleSubscriberUpdate = require('./HandleSubscriberUpdate');
 const ProcessCommand = require('./ProcessCommand');
 
 module.exports = {
+    HandleGroupMember,
     HandleGroupUpdate,
     HandleLoginSuccess,
     HandleMessageSend,

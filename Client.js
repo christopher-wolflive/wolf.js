@@ -1,8 +1,10 @@
 const { GenerateToken, entityInCache, entitiesInCache, updateValues } = require('./Constants');
-const { Events } = require('./Helpers');
+const Events = require('./Helpers/Events');
 const { Socket } = require('./Network');
-const { User, Group, Message } = require('./Models');
-const { HandleLoginSuccess, HandleMessageSend, HandleReconnected } = require('./Handlers');
+const User = require('./Models/User');
+const Group = require('./Models/Group');
+const { HandleLoginSuccess, HandleReconnected } = require('./Handlers');
+const GroupMember = require('./Models/GroupMember');
 
 class Client {
     Groups;
@@ -62,6 +64,7 @@ class Client {
     /**
      * Get Groups By ID
      * @param {number} id 
+     * @returns {Group}
      */
     GetGroup = async (id) => {
         let search = entityInCache(this.Groups, 'Id', id);
@@ -94,6 +97,32 @@ class Client {
         }
 
         return groups;
+    }
+
+    /**
+     * Get Group Members Lists
+     * @param {*} id 
+     * @returns {GroupMember[]}
+     */
+    GetGroupMemberList = async id => {
+        try {
+            // Load Group in Cache, if not
+            let group = await this.GetGroup(id);
+
+            if (group.MemberListLoaded)
+                return group.MemberList;
+            
+            // Request Group Members
+            let response = await this.Socket.RequestGroupMemberList(id);
+            let groupMembers = response.map(t => new GroupMember(t['id'], t['capabilities']));
+
+            updateValues(this.Groups, 'Id', id, { MemberList: groupMembers, MemberListLoaded: true });
+
+            return groupMembers;
+        } catch (err) {
+            console.log('Error', err);
+            return [];
+        }
     }
 
     /**

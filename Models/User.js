@@ -1,6 +1,6 @@
 const { AssignValues } = require('../Constants');
 
-class User {
+module.exports = class User {
     Id = -1;
     Hash = '';
     Privileges = 0;
@@ -49,9 +49,4 @@ class UserExtended {
     constructor(obj) {
         obj && AssignValues(this, obj);
     }
-}
-
-module.exports = {
-    User,
-    UserExtended
 }

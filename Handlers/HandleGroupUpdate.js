@@ -1,6 +1,6 @@
 const Client = require('../Client');
 const { entityInCache, updateValues } = require('../Constants');
-const { Group } = require('../Models');
+const Group = require('../Models/Group');
 
 /**
  * 

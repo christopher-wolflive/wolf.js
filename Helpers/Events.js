@@ -1,8 +1,10 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
-const { User, Message } = require('../Models');
+const Message = require('../Models/Message');
+const User = require('../Models/User');
+const FailedCommand = require('../Models/FailedCommand');
 
-class Events {
+module.exports = class Events {
     Client;
     EE;
 
@@ -55,8 +57,14 @@ class Events {
      * @param {(message: Message) => void} fn
      */
     set MessageRecieved(fn) { this.EE.on('message send', fn); }
-}
 
-module.exports = {
-    Events
+    /**
+     * @param {(update: GroupMemberUpdate) => void} fn
+     */
+    set GroupAction(fn) { this.EE.on('group action', fn); }
+
+    /**
+     * @param {(report: FailedCommand) => void} fn
+     */
+    set FailedCommand(fn) { this.EE.on('failed command', fn); }
 }

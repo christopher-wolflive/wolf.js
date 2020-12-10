@@ -1,6 +1,5 @@
 const Client = require('./Client');
-const { Command, CommandContext } = require('./Commands');
-const { Group } = require('./Models');
+const Command = require('./Commands/Command');
 const { ProcessCommand } = require('./Handlers');
 
 class Bot extends Client {
@@ -37,7 +36,8 @@ class Bot extends Client {
                 Trigger: cmd.Trigger,
                 Group: cmd.Group,
                 Private: cmd.Private,
-                Both: cmd.Both
+                Both: cmd.Both,
+                RequiredRole: cmd.RequiredRole
             });
         });
     }
