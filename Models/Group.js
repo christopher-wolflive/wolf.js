@@ -1,6 +1,6 @@
 const { AssignValues } = require('../Constants');
 
-class Group {
+module.exports = class Group {
     Id = -1;
     Name = '';
     Hash = '';
@@ -60,10 +60,4 @@ class GroupAudioCounts {
     constructor(obj) {
         obj && AssignValues(this, obj);
     }
-}
-
-module.exports = {
-    Group,
-    GroupAudioConfig,
-    GroupAudioCounts
 }

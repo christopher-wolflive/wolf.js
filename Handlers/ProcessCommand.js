@@ -1,6 +1,6 @@
 const Bot = require('../Bot');
-const { Group } = require('../Models');
-const { CommandContext } = require('../Commands');
+const Group = require('../Models/Group');
+const CommandContext = require('../Commands/CommandContext');
 
 /**
  * 

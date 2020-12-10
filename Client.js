@@ -1,8 +1,10 @@
 const { GenerateToken, entityInCache, entitiesInCache, updateValues } = require('./Constants');
-const { Events } = require('./Helpers');
+const Events = require('./Helpers/Events');
 const { Socket } = require('./Network');
-const { User, Group, Message } = require('./Models');
-const { HandleLoginSuccess, HandleMessageSend, HandleReconnected } = require('./Handlers');
+const User = require('./Models/User');
+const Group = require('./Models/Group');
+const Message = require('./Models/Message');
+const { HandleLoginSuccess, HandleReconnected } = require('./Handlers');
 
 class Client {
     Groups;

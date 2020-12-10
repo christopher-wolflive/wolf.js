@@ -1,8 +1,9 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
-const { User, Message } = require('../Models');
+const Message = require('../Models/Message');
+const User = require('../Models/User');
 
-class Events {
+module.exports = class Events {
     Client;
     EE;
 
@@ -55,8 +56,4 @@ class Events {
      * @param {(message: Message) => void} fn
      */
     set MessageRecieved(fn) { this.EE.on('message send', fn); }
-}
-
-module.exports = {
-    Events
 }

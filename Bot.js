@@ -1,6 +1,5 @@
 const Client = require('./Client');
-const { Command, CommandContext } = require('./Commands');
-const { Group } = require('./Models');
+const Command = require('./Commands/Command');
 const { ProcessCommand } = require('./Handlers');
 
 class Bot extends Client {

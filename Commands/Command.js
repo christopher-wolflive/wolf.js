@@ -1,7 +1,7 @@
 const { AssignValues } = require('../Constants');
-const { CommandContext } = require('./CommandContext');
+const CommandContext = require('./CommandContext');
 
-class Command {
+module.exports = class Command {
     Trigger = '';
     Group = null;
     Private = null;
@@ -19,8 +19,4 @@ class Command {
         this.SubCommands = subcommands;
         config && AssignValues(this, config);
     }
-}
-
-module.exports = {
-    Command
 }
