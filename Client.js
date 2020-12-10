@@ -164,6 +164,17 @@ class Client {
 
         return users;
     }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {any} content 
+     * @param {boolean} isGroup 
+     * @param {string} mimeType 
+     */
+    SendMessage = async (id, content, isGroup, mimeType = 'text/plain') => {
+        return await this.Socket.RequestSendMessage(id, content, isGroup, mimeType);
+    }
 }
 
 module.exports = Client;

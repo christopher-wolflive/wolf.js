@@ -167,6 +167,23 @@ class Socket {
     RequestSubscriberTypeList = async (type) => {
         return await this.Request(`subscriber ${type} list`);
     }
+
+    /**
+     *
+     * @param {number} id
+     * @param {any} content
+     * @param {boolean} isGroup
+     * @param {string} mimeType
+     */
+    RequestSendMessage = async (id, content, isGroup, mimeType) => {
+        return await this.Request('message send', {
+            recipient: id,
+            isGroup,
+            mimeType,
+            data: content,
+            flightId: `${this.Client.CurrenUser.Id}_${id}_${new Date().getTime()}`
+        })
+    }
 }
 
 module.exports = {
