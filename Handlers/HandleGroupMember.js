@@ -64,8 +64,4 @@ module.exports = async client => {
             client.On.EE.emit('group action', new GroupMemberUpdate(subscriberId, groupId, -1));
         } catch {}
     });
-
-    client.Socket.IO.on('message send', async data => {
-        console.log(data);
-    });
 }
