@@ -1,5 +1,6 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
+const { User } = require('../Models');
 
 class Events {
     Client;
@@ -31,7 +32,7 @@ class Events {
     set Reconnected(fn) { this.Client.Socket.IO.on('reconnect', fn); }
 
     /**
-     * @param {() => void} fn
+     * @param {(user: User) => void} fn
      */
     set LoginSuccess(fn) { this.EE.on('security login success', fn); }
 

@@ -106,6 +106,27 @@ class Socket {
 
         return responses;
     }
+
+    /**
+     * Request a User by ID
+     * @param {number} id
+     */
+    RequestUserById = async (id) => {
+        return this.Request('subscriber profile', {
+            headers: {},
+            body: {
+                id,
+                extended: true,
+                subscribe: true
+            }
+        });
+    }
+
+    RequestUsersById = async (id) => {
+        return this.Request('subscriber profile', {
+
+        });
+    }
 }
 
 module.exports = {
