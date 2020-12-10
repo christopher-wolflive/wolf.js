@@ -1,4 +1,4 @@
-const { Client } = require('./Client');
+const Client = require('./Client');
 
 class Bot extends Client {
 
@@ -7,4 +7,4 @@ class Bot extends Client {
     }
 }
 
-module.exports = { Bot }
+module.exports = Bot;

@@ -1,5 +1,5 @@
-const { Bot } = require('./Bot');
-const { Client } = require('./Client');
+const Bot = require('./Bot');
+const Client = require('./Client');
 
 module.exports = {
     Bot,
