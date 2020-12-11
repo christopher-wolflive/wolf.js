@@ -22,7 +22,7 @@ class Client {
     constructor(userCache = [], groupCache = []) {
         this.Users = userCache;
         this.Groups = groupCache;
-        this.Token = GenerateToken(1024);
+        this.Token = GenerateToken(64);
         this.Socket = new Socket(this);
         this.On = new Events(this);
 
