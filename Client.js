@@ -120,7 +120,7 @@ module.exports = class Client {
                 isGroup,
                 mimeType,
                 data: content,
-                flightId: `${this.CurrenUser.Id}_${id}_${new Date().getTime()}`
+                flightId: `${this.CurrentUser.Id}_${id}_${new Date().getTime()}`
             });
         } catch (err) { return err; }
     }
