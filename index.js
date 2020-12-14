@@ -1,19 +1,14 @@
-const Bot = require('./Bot');
 const Client = require('./Client');
-const Command = require('./Commands/Command');
-const CommandContext = require('./Commands/CommandContext');
-const Group = require('./Models/Group');
-const Message = require('./Models/Message');
-const User = require('./Models/User');
-const GroupRole = require('./Enums/GroupRole');
+const Events = require('./Helpers/Events');
+const GroupManager = require('./Managers/GroupManager');
+const Socket = require('./Network/Socket');
+const User = require('./Models/User/User');
+const UserManager = require('./Managers/UserManager');
 
 module.exports = {
-    Bot,
     Client,
-    Command,
-    CommandContext,
-    Group,
-    GroupRole,
-    Message,
-    User
+    Events,
+    GroupManager,
+    Socket,
+    UserManager
 }
