@@ -66,7 +66,7 @@ module.exports = class Events {
     /**
      * @param {(message: Message) => void} fn
      */
-    set PrivateMessageRecieved(fn) { this.#EE.on('private message recieved', fn); }
+    set PrivateMessageRecieved(fn) { this.#EE.on('private message send', fn); }
 
     /**
      * @param {() => void} fn
