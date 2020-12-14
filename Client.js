@@ -1,177 +1,192 @@
-const { GenerateToken, entityInCache, entitiesInCache, updateValues } = require('./Constants');
 const Events = require('./Helpers/Events');
-const { Socket } = require('./Network');
-const User = require('./Models/User');
-const Group = require('./Models/Group');
-const { HandleLoginSuccess, HandleReconnected } = require('./Handlers');
-const GroupMember = require('./Models/GroupMember');
+const Group = require('./Models/Group/Group');
+const GroupManager = require('./Managers/GroupManager');
+const GroupMember = require('./Models/GroupMember/GroupMember');
+const GroupMessage = require('./Models/Message/GroupMessage');
+const Message = require('./Models/Message/Message');
+const Socket = require('./Network/Socket');
+const User = require('./Models/User/User');
+const UserManager = require('./Managers/UserManager');
 
-class Client {
-    Groups;
-    Users;
-    CurrenUser = new User({});
-    Token;
-    Socket;
+module.exports = class Client {
+    #Token;
+    #GroupManager;
+    #UserManager;
+    CurrentUser = new User(-1);
     On;
-
+    Socket;
+    
     /**
-     * 
-     * @param {User[]} userCache 
-     * @param {Group[]} groupCache 
+     * Create a new Client
+     * @param {string} token Use an existing token
      */
-    constructor(userCache = [], groupCache = []) {
-        this.Users = userCache;
-        this.Groups = groupCache;
-        this.Token = GenerateToken(64);
-        this.Socket = new Socket(this);
+    constructor(token = null) {
+        this.#Token = token ?? this.#GenerateToken(64);
         this.On = new Events(this);
+        this.Socket = new Socket(this.#Token);
+        this.#GroupManager = new GroupManager(this);
+        this.#UserManager = new UserManager(this);
 
-        HandleLoginSuccess(this);
-        HandleReconnected(this);
-
-        this.Socket.HandleSocketEvents(this);
+        this.On.Welcome = this.#OnWelcome;
+        this.On.LoginSuccess = this.#OnLoginSuccess;
+        this.Socket.On('message send', this.#OnMessage);
     }
 
     /**
-     * Login to WOLF
+     * Generate a Token
+     * @param {number} length 
+     * @returns {string}
+     */
+    #GenerateToken = length => {
+        let d = new Date().getTime();
+        return 'WolfJS' + 'x'.repeat(length).replace(/[x]/gi, c => {
+            let r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+
+    /**
+     * Login to WOLF with the provided credentials
      * @param {string} email 
      * @param {string} password 
-     * @param {1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9} deviceTypeId
+     * @returns {boolean}
      */
-    Login = async (email, password, deviceTypeId = 8) => {
+    Login = async (email, password) => {
         try {
-            let loginResp = await this.Socket.RequestLogin(email, password, deviceTypeId);
-            this.CurrenUser = await this.GetUser(loginResp['id']);
-            this.On.EE.emit('security login success', this.CurrenUser);
+            let loginRes = await this.Socket.Request('security login', {
+                username: email,
+                password,
+                deviceTypeId: 8
+            });
+
+            let user = await this.#HandleLoginData(loginRes);
+            this.On.Emit('security login success', user);
+            return true;
         } catch {
-            this.On.EE.emit('security login failed');
+            this.On.Emit('security login failed');
+            return false;
         }
     }
 
     /**
-     * Logout from WOLF
-     */
-    Logout = async () => {
-        try {
-            await this.Socket.RequestLogout();
-            this.CurrenUser = new User({});
-            this.On.EE.emit('security logout success');
-        } catch {
-            this.On.EE.emit('security logout failed')
-        }
-    }
-
-    /**
-     * Get Groups By ID
+     * Get a User by ID
      * @param {number} id 
-     * @returns {Group}
-     */
-    GetGroup = async (id) => {
-        let search = entityInCache(this.Groups, 'Id', id);
-
-        if (search.cached)
-            return search.value;
-        
-        let group = new Group(await this.Socket.RequestGroupById(id));
-        this.Groups.push(group);
-        return group;
-    }
-
-    /**
-     * Get Groups By ID
-     * @param {...number} ids
-     * @returns {Group[]}
-     */
-    GetGroups = async (...ids) => {
-        let serach = entitiesInCache(this.Groups, 'Id', ids);
-        let groups = serach.filter(t => t.cached).map(t => t.value);
-        let uncached = serach.filter(t => !t.cached).map(t => t['id']);
-
-        if (uncached.length > 0) {
-            let fetched = await this.Socket.RequestGroupsById(uncached);
-            let parsed = fetched.map(t => new Group(t));
-
-            this.Groups.push(...parsed);
-            
-            groups.push(...parsed);
-        }
-
-        return groups;
-    }
-
-    /**
-     * Get Group Members Lists
-     * @param {*} id 
-     * @returns {GroupMember[]}
-     */
-    GetGroupMemberList = async id => {
-        try {
-            // Load Group in Cache, if not
-            let group = await this.GetGroup(id);
-
-            if (group.MemberListLoaded)
-                return group.MemberList;
-            
-            // Request Group Members
-            let response = await this.Socket.RequestGroupMemberList(id);
-            let groupMembers = response.map(t => new GroupMember(t['id'], t['capabilities']));
-
-            updateValues(this.Groups, 'Id', id, { MemberList: groupMembers, MemberListLoaded: true });
-
-            return groupMembers;
-        } catch (err) {
-            console.log('Error', err);
-            return [];
-        }
-    }
-
-    /**
-     * Get Groups By ID
-     * @param {number} id
+     * @returns {User}
      */
     GetUser = async (id) => {
-        let search = entityInCache(this.Users, 'Id', id);
-
-        if (search.cached)
-            return search.value;
-        
-        let user = new User(await this.Socket.RequestUserById(id));
-        this.Users.push(user);
-        return user;
+        try {
+            return await this.#UserManager.GetUser(id);
+        } catch { return null; }
     }
 
     /**
-     * Get Groups By ID
-     * @param {number} id
+     * Get Users by their ID
+     * @param  {...number} ids 
      * @returns {User[]}
      */
     GetUsers = async (...ids) => {
-        let search = entitiesInCache(this.Users, 'Id', ids);
-        let users = search.filter(t => t.cached).map(t => t.value);
-        let uncached = search.filter(t => !t.cached).map(t => t['id']);
+        try {
+            return await this.#UserManager.GetUsers(...ids);
+        } catch { return []; }
+    }
 
-        if (uncached.length > 0) {
-            let fetched = await this.Socket.RequestUsersById(uncached);
-            let parsed = fetched.map(t => new User(t));
+    /**
+     * Get a Group by ID
+     * @param  {number} id
+     * @returns {Group};
+     */
+    GetGroup = async (id) => {
+        try {
+            return await this.#GroupManager.GetGroup(id);
+        } catch { return null; }
+    }
 
-            this.Users.push(...parsed);
-
-            users.push(...parsed);
-        }
-
-        return users;
+    /**
+     * Get Groups by their ID
+     * @param  {...number} ids
+     * @returns {Group[]}
+     */
+    GetGroups = async (...ids) => {
+        try { 
+            return await this.#GroupManager.GetGroups(...ids);
+        } catch { return []; }
     }
 
     /**
      * 
      * @param {number} id 
-     * @param {any} content 
-     * @param {boolean} isGroup 
-     * @param {string} mimeType 
+     * @returns {GroupMember[]}
      */
-    SendMessage = async (id, content, isGroup, mimeType = 'text/plain') => {
-        return await this.Socket.RequestSendMessage(id, content, isGroup, mimeType);
+    GetGroupMemberList = async (id) => {
+        try {
+            return await this.#GroupManager.GetGroupMemberList(id);
+        } catch { return []; }
     }
-}
 
-module.exports = Client;
+    //#region Data Binders
+
+    #OnWelcome = async welcomeData => {
+        const { loggedInUser } = welcomeData;
+
+        if (loggedInUser) {
+            let user = await this.#HandleLoginData(loggedInUser);
+            this.On.Emit('security login success', user);
+        }
+    }
+
+    #OnLoginSuccess = async user => {
+        // Subscribe to Messages
+        await this.Socket.Request('message group subscribe');
+        await this.Socket.Request('message private subscribe');
+
+        // Fetch Contacts
+        let contacts = await this.Socket.Request('subscriber contact list');
+        await this.GetUsers(contacts.map(t => t.id));
+
+        // Fetch Groups
+        let groups = await this.Socket.Request('subscriber group list');
+        await this.GetGroups(groups.map(t => t.id));
+
+        // Emit Ready
+        this.On.Emit('ready');
+    }
+
+    #OnMessage = async data => {
+        let mesg = new Message(data.body);
+
+        this.On.Emit('message send', mesg);
+
+        const { isGroup, originator, recipient } = data.body;
+
+        if (!isGroup)
+            return this.On.Emit('private message send', mesg);
+        
+        // Do Some Parsing
+        let group = this.#GroupManager.GetEntity(recipient) ?? new Group([]);
+
+        let gm = group.MemberList.find(t => t.Id === originator) ?? new GroupMember(originator, -1);
+
+        return this.On.Emit('group message send', new GroupMessage(data.body, gm.Capabilities));
+    }
+    //#endregion
+
+    //#region Data Processors
+
+    /**
+     * @param {any} loginData 
+     * @returns {User}
+     */
+    #HandleLoginData = async loginData => {
+        this.#GroupManager.ClearEntities();
+        this.#UserManager.ClearEntities();
+
+        const { id } = loginData;
+
+        let user = await this.#UserManager.GetUser(id);
+
+        this.CurrentUser = user;
+        return user;
+    }
+    //#endregion
+}
