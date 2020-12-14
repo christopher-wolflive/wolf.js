@@ -113,6 +113,18 @@ module.exports = class Client {
         } catch { return []; }
     }
 
+    SendMessage = async (id, content, isGroup = true, mimeType = 'text/plain') => {
+        try {
+            return await this.Socket.Request('message send', {
+                recipient: id,
+                isGroup,
+                mimeType,
+                data: content,
+                flightId: `${this.CurrenUser.Id}_${id}_${new Date().getTime()}`
+            });
+        } catch (err) { return err; }
+    }
+
     /**
      * 
      * @param {number} id 
