@@ -1,11 +1,12 @@
 const Events = require('./Helpers/Events');
 const Group = require('./Models/Group/Group');
 const GroupManager = require('./Managers/GroupManager');
+const GroupMember = require('./Models/GroupMember/GroupMember');
+const GroupMessage = require('./Models/Message/GroupMessage');
 const Message = require('./Models/Message/Message');
 const Socket = require('./Network/Socket');
 const User = require('./Models/User/User');
 const UserManager = require('./Managers/UserManager');
-const GroupMember = require('./Models/GroupMember/GroupMember');
 
 module.exports = class Client {
     #Token;
@@ -151,7 +152,23 @@ module.exports = class Client {
         this.On.Emit('ready');
     }
 
-    #OnMessage = async data => this.On.Emit('message send', new Message(data.body));
+    #OnMessage = async data => {
+        let mesg = new Message(data.body);
+
+        this.On.Emit('message send', mesg);
+
+        const { isGroup, originator, recipient } = data.body;
+
+        if (!isGroup)
+            return this.On.Emit('private message send', mesg);
+        
+        // Do Some Parsing
+        let group = this.#GroupManager.GetEntity(recipient) ?? new Group([]);
+
+        let gm = group.MemberList.find(t => t.Id === originator) ?? new GroupMember(originator, -1);
+
+        return this.On.Emit('group message send', new GroupMessage(data.body, gm.Capabilities));
+    }
     //#endregion
 
     //#region Data Processors

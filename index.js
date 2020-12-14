@@ -5,6 +5,7 @@ const GroupAudioConfig = require('./Models/Group/GroupAudioConfig');
 const GroupAudioCounts = require('./Models/Group/GroupAudioCounts');
 const GroupManager = require('./Managers/GroupManager');
 const GroupMember = require('./Models/GroupMember/GroupMember');
+const GroupMessage = require('./Models/Message/GroupMessage');
 const GroupRole = require('./Enums/GroupRole');
 const Message = require('./Models/Message/Message');
 const Socket = require('./Network/Socket');
@@ -20,6 +21,7 @@ module.exports = {
     GroupAudioCounts,
     GroupManager,
     GroupMember,
+    GroupMessage,
     GroupRole,
     Message,
     Socket,

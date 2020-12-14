@@ -1,5 +1,6 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
+const GroupMessage = require('../Models/Message/GroupMessage');
 const Message = require('../Models/Message/Message');
 const User = require('../Models/User/User');
 
@@ -56,6 +57,16 @@ module.exports = class Events {
      * @param {(message: Message) => void} fn
      */
     set MessageRecieved(fn) { this.#EE.on('message send', fn); }
+
+    /**
+     * @param {(message: GroupMessage) => void} fn
+     */
+    set GroupMessageRecieved(fn) { this.#EE.on('group message send', fn); }
+
+    /**
+     * @param {(message: Message) => void} fn
+     */
+    set PrivateMessageRecieved(fn) { this.#EE.on('private message recieved', fn); }
 
     /**
      * @param {() => void} fn
