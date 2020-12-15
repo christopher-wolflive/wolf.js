@@ -174,7 +174,7 @@ module.exports = class GroupManager extends IManager {
                 });
 
                 let fGroups = Object.values(resp).filter(t => t.code === 200).map(t => this.#GenerateGroup(t.body));
-                groups.push(fGroups);
+                groups.push(...fGroups);
             } catch { }
         }
 

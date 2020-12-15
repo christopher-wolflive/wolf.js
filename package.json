@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "The Worlds Online Festival API",
   "main": "index.js",
   "scripts": {
