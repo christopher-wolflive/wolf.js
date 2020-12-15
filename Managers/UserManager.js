@@ -111,7 +111,7 @@ module.exports = class UserManager extends IManager {
                 });
 
                 let fUsers = Object.values(resp).filter(t => t.code === 200).map(t => this.#GenerateUser(t.body));
-                users.push(fUsers);
+                users.push(...fUsers);
             } catch (err) { }
         }
 
