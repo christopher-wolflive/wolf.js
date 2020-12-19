@@ -7,6 +7,9 @@ const Message = require('./Models/Message/Message');
 const Socket = require('./Network/Socket');
 const User = require('./Models/User/User');
 const UserManager = require('./Managers/UserManager');
+const GroupRole = require('./Enums/GroupRole');
+const GroupMemberUpdate = require('./Models/GroupMember/GroupMemberUpdate');
+const Privileges = require('./Enums/Privileges');
 
 module.exports = class Client {
     #Token;
@@ -125,6 +128,43 @@ module.exports = class Client {
         } catch (err) { return err; }
     }
 
+    #RankGroupRole = role => {
+        switch (role) {
+            case GroupRole.Owner:
+                return 3;
+            case GroupRole.Admin:
+                return 2;
+            case GroupRole.Mod:
+                return 1;
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * @param {GroupMessage} message 
+     */
+    DeleteMessage = async (message) => {
+        try {
+            if (!message.IsGroup)
+                return false;
+        
+            // Fetch member list
+            await this.GetGroupMemberList(message.Recipient.id);
+
+            await this.Socket.Request('message update', {
+                recipientId: message.Recipient.id,
+                timestamp: message.Timestamp,
+                isGroup: message.IsGroup,
+                metadata: {
+                    isDeleted: true
+                }
+            });
+
+            return true;
+        } catch (e) { console.log(e); return false; }
+    }
+
     /**
      * 
      * @param {number} id 
@@ -149,7 +189,7 @@ module.exports = class Client {
 
     #OnLoginSuccess = async user => {
         // Subscribe to Messages
-        await this.Socket.Request('message group subscribe');
+        await this.Socket.Request('message group subscribe', { headers: { version: 4 }});
         await this.Socket.Request('message private subscribe');
 
         // Fetch Contacts
@@ -164,6 +204,29 @@ module.exports = class Client {
         this.On.Emit('ready');
     }
 
+    #ParseCapabilities = capabilities => {
+        switch (capabilities) {
+            case 'owner':
+                return GroupRole.Owner;
+            case 'admin':
+                return GroupRole.Admin;
+            case 'mod':
+                return GroupRole.Mod;
+            case 'reset':
+                return GroupRole.User;
+            case 'silence':
+                return GroupRole.Silence;
+            case 'kick':
+                return GroupRole.Kick;
+            case 'ban':
+                return GroupRole.Ban;
+            case 'join':
+                return GroupRole.User;
+            default:
+                return -1;
+        }
+    }
+
     #OnMessage = async data => {
         let mesg = new Message(data.body);
 
@@ -174,10 +237,20 @@ module.exports = class Client {
         if (!isGroup)
             return this.On.Emit('private message send', mesg);
         
-        // Do Some Parsing
-        let group = this.#GroupManager.GetEntity(recipient) ?? new Group([]);
+        let group = await this.GetGroup(recipient.id);
+        
+        // Parse for admin actions
+        if (mesg.MimeType === 'application/palringo-group-action' && !group.MemberListLoaded) {
+            let groupId = recipient.id;
+            let userId = originator.id;
+            let user = await this.GetUser(userId);
+            let capabilities = this.#ParseCapabilities(JSON.parse(data.body.data).type);
 
-        let gm = group.MemberList.find(t => t.Id === originator) ?? new GroupMember(originator, -1);
+            this.On.Emit('group action', new GroupMemberUpdate(userId, user, groupId, group, capabilities));
+        }
+        
+        // Do Some Parsing
+        let gm = group?.MemberList?.find(t => t.Id === originator) ?? new GroupMember(originator, -1);
 
         return this.On.Emit('group message send', new GroupMessage(data.body, gm.Capabilities));
     }

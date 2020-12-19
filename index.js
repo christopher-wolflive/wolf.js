@@ -8,6 +8,7 @@ const GroupMember = require('./Models/GroupMember/GroupMember');
 const GroupMessage = require('./Models/Message/GroupMessage');
 const GroupRole = require('./Enums/GroupRole');
 const Message = require('./Models/Message/Message');
+const Privileges = require('./Enums/Privileges');
 const Socket = require('./Network/Socket');
 const User = require('./Models/User/User');
 const UserExtended = require('./Models/User/UserExtended');
@@ -24,6 +25,7 @@ module.exports = {
     GroupMessage,
     GroupRole,
     Message,
+    Privileges,
     Socket,
     User,
     UserExtended,

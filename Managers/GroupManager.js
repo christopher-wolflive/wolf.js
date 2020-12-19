@@ -4,6 +4,7 @@ const Group = require('../Models/Group/Group');
 const GroupAudioConfig = require('../Models/Group/GroupAudioConfig');
 const GroupAudioCounts = require('../Models/Group/GroupAudioCounts');
 const GroupMember = require('../Models/GroupMember/GroupMember');
+const GroupMemberUpdate = require('../Models/GroupMember/GroupMemberUpdate');
 const Message = require('../Models/Message/Message');
 
 module.exports = class GroupManager extends IManager {
@@ -123,8 +124,13 @@ module.exports = class GroupManager extends IManager {
 
             if (update === 'update')
                 this.FillValues(members[index], { capabilities });
-        
+            
             this.UpdateEntity(groupId, { Members: members.length, MemberList: members });
+            
+            let user = await this.#Client.GetUser(subscriberId);
+            let group = await this.GetGroup(groupId);
+            
+            this.#Client.On.Emit('group action', new GroupMemberUpdate(subscriberId, user, groupId, group, capabilities ?? -1));
         } catch {}
     }
 
