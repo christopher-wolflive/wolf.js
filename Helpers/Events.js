@@ -1,6 +1,7 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
 const GroupMessage = require('../Models/Message/GroupMessage');
+const GroupMemberUpdate = require('../Models/GroupMember/GroupMemberUpdate');
 const Message = require('../Models/Message/Message');
 const User = require('../Models/User/User');
 
@@ -72,6 +73,11 @@ module.exports = class Events {
      * @param {() => void} fn
      */
     set Ready(fn) { this.#EE.on('ready', fn); }
+
+    /**
+     * @param {(update: GroupMemberUpdate) => void} fn
+     */
+    set GroupMemberUpdate(fn) { this.#EE.on('group action', fn); }
 
     /**
      * 
