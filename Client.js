@@ -228,6 +228,12 @@ module.exports = class Client {
     }
 
     #OnMessage = async data => {
+        if (data.body.recipient.id)
+            data.body.recipient = data.body.recipient.id;
+        
+        if (data.body.originator.id)
+            data.body.originator = data.body.originator.id;
+        
         let mesg = new Message(data.body);
 
         this.On.Emit('message send', mesg);
@@ -237,12 +243,12 @@ module.exports = class Client {
         if (!isGroup)
             return this.On.Emit('private message send', mesg);
         
-        let group = await this.GetGroup(recipient.id);
+        let group = await this.GetGroup(recipient);
         
         // Parse for admin actions
         if (mesg.MimeType === 'application/palringo-group-action' && !group.MemberListLoaded) {
-            let groupId = recipient.id;
-            let userId = originator.id;
+            let groupId = recipient;
+            let userId = originator;
             let user = await this.GetUser(userId);
             let capabilities = this.#ParseCapabilities(JSON.parse(data.body.data).type);
 
