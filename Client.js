@@ -64,6 +64,7 @@ module.exports = class Client {
         let response = await AuthRequests.Login(this.Socket, email, password, onlineState);
 
         if (response.code !== 200) {
+            this.On.LoginFailed(response.headers.subCode);
             return false;
         }
 

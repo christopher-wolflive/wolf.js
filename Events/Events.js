@@ -44,6 +44,18 @@ module.exports = class Events {
     set Disconnected(fn) { this.Client.Socket.On('disconnect', fn); };
 
     /**
+     * Call a function when Login to WOLF failed
+     * @param {(reason: number) => void} fn
+     */
+    set LoginFailed(fn) { this.Emitter.on('security login failed', fn); };
+
+    /**
+     * Emit the Login Failed Function
+     * @returns {(reason: number) => boolean}
+     */
+    get LoginFailed() { return (reason) => this.Emitter.emit('security login failed', reason); };
+
+    /**
      * Call a fucntion when Login to WOLF was successful
      * @param {(subscriber: Subscriber) => void} fn
      */
