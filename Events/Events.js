@@ -3,6 +3,7 @@ const { EventEmitter } = require('events');
 const IOEvents = require('./IOEvents');
 const { Subscriber } = require('../Models/Subscriber');
 const { SubscriberRequests } = require('../Network/Requests');
+const { Group } = require('../Models/Group');
 
 module.exports = class Events {
     /**
@@ -43,6 +44,18 @@ module.exports = class Events {
      * @param {() => void} fn
      */
     set Disconnected(fn) { this.Client.Socket.On('disconnect', fn); };
+
+    /**
+     * Call a function when a Group has been updated
+     * @param {(old: Group, current: Group) => void} fn
+     */
+    set GroupUpdated(fn) { this.Emitter.on('group update', fn); };
+    
+    /**
+     * Emit the Group Updated Event
+     * @returns {(old: Group, current: Group) => boolean}
+     */
+    get GroupUpdated() { return (old, current) => this.Emitter.emit('group update', old, current); };
 
     /**
      * Call a function when Login to WOLF failed
@@ -88,6 +101,30 @@ module.exports = class Events {
         client.Socket.On('subscriber update', OnSubscriberUpdate(client));
         client.Socket.On('welcome', OnWelcome(client));
     }
+}
+
+/**
+ * @param {Client} client
+ */
+OnGroupUpdate = client => async data => {
+    if (data.code !== 200)
+        return;
+    
+    // Get Index of Group in Cache
+    let index = client.Groups.Cache.findIndex(t => t.Id === data.body.id);
+
+    let old = client.Subscribers.Cache[index] ?? null;
+
+    // Fetch the updates group
+    let current = await SubscriberRequests.Get(client.Socket, data.body.id);
+
+    if (current.code !== 200)
+        return;
+    
+    current = new Group(current.body);
+
+    if (index < 0) client.Groups.Cache.push(current);
+    else client.Groups.Cache[index] = current;
 }
 
 /**
