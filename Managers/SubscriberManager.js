@@ -67,10 +67,8 @@ module.exports = class SubscriberManager {
         if (!this.Cache)
             this.Cache = [];
         
-        let subscribers = [];
-
-        // Get Cached Subscribers
-        subscribers.push(...this.Cache.filter(sub => idList.includes(sub.Id)));
+        // Get Cached Subscibers
+        let subscribers = this.Cache.filter(sub => idList.includes(sub.Id));
 
         // Filter out cached subscriber ids
         idList = idList.filter(id => !subscribers.some(sub => sub.Id === id));

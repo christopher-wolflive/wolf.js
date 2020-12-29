@@ -75,8 +75,6 @@ module.exports = class Socket {
         for (let i = 0; i < data?.body?.idList.length; i += chunkSize)
             chunks.push(data?.body?.idList.slice(i, i + chunkSize));
         
-        console.log({ idList: data?.body?.idList, chunks, chunkSize });
-        
         // Create a function that the asyncPool library can call
         let req = (idList) => new Promise(resolve => this.IO.emit(event, { headers: data.headers, body: { ...data.body, idList } }, resp => resolve(resp)));
 

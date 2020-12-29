@@ -1,5 +1,6 @@
 const { AuthRequests } = require('./Network/Requests');
 const Events = require('./Events/Events');
+const GroupManager = require('./Managers/GroupManager');
 const Socket = require('./Network/Socket');
 const { Subscriber } = require('./Models/Subscriber');
 const SubscriberManager = require('./Managers/SubscriberManager');
@@ -33,6 +34,12 @@ module.exports = class Client {
     On;
 
     /**
+     * Functions relating to fetching and updating groups
+     * @type {GroupManager}
+     */
+    Groups;
+
+    /**
      * Functions relating to fetching and updating subscribers
      * @type {SubscriberManager}
      */
@@ -50,6 +57,7 @@ module.exports = class Client {
 
         this.On.BindEvents(this);
 
+        this.Groups = new GroupManager(this);
         this.Subscribers = new SubscriberManager(this);
     }
 
