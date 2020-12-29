@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.0.6",
+  "version": "3.0.0",
   "description": "The Worlds Online Festival API",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/christopher-wolflive/wolf.js#readme",
   "dependencies": {
-    "mime-types": "^2.1.27",
-    "socket.io-client": "2.3.1"
+    "socket.io-client": "2.3.1",
+    "tiny-async-pool": "^1.2.0"
   }
 }
