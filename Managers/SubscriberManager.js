@@ -48,6 +48,12 @@ module.exports = class SubscriberManager {
         } catch { return []; }
     }
 
+    GetSettings = async () => {
+        try {
+            return await Requests.SubscriberSettings(this.#Client.V3);
+        } catch { return null }
+    }
+
     /**
      * Update the Current Client's Subscriber's Profile
      * @param {{nickname?: string, status?: string, extended?: { name?: string, about?: string, gender?: number, lookingFor?: number, relationship?: number, langugae?: number, urls?: string[], dateOfBirth?: number}}} data
