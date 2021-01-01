@@ -5,47 +5,47 @@ module.exports = class Subscriber {
     /**
      * @type {number}
      */
-    Id = -1;
+    Id;
     
     /**
      * @type {string}
      */
-    Hash = '';
+    Hash;
 
     /**
      * @type {number}
      */
-    Privileges = -1;
+    Privileges;
 
     /**
      * @type {string}
      */
-    Nickname = '';
+    Nickname;
 
     /**
      * @type {string}
      */
-    Status = '';
+    Status;
 
     /**
      * @type {number}
      */
-    Reputation = 0;
+    Reputation;
 
     /**
      * @type {number}
      */
-    Icon = 0;
+    Icon;
 
     /**
      * @type {number}
      */
-    OnlineState = 0;
+    OnlineState;
 
     /**
      * @type {number}
      */
-    DeviceType = 0;
+    DeviceType;
 
     /**
      * @type {SubscriberCharms}
