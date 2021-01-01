@@ -1,101 +1,88 @@
-const { AuthRequests } = require('./Network/Requests');
-const Events = require('./Events/Events');
-const GroupManager = require('./Managers/GroupManager');
-const Socket = require('./Network/Socket');
-const { Subscriber } = require('./Models/Subscriber');
-const SubscriberManager = require('./Managers/SubscriberManager');
+const Events = require('./Events');
+const { EventEmitter } = require('events');
+const IO = require('./Network/IO/IO');
+let Requests = require('./Network/IO/Requests');
+let SubscriberManager = require('./Managers/SubscriberManager');
 
-/**
- * WOLF Client - Used for interacting with the service
- */
 module.exports = class Client {
     /**
-     * The User signed into this session
-     * @type {Subscriber}
-     */
-    AuthUser = null;
-
-    /**
-     * The Token to Associate with this Client
      * @type {string}
      */
     Token;
 
     /**
-     * The Underlying Socket.IO Handler
-     * @type {Socket}
+     * @type {IO}
      */
-    Socket;
+    V3;
 
     /**
-     * Events Handler
+     * Internal Event Emitter
+     * @type {EventEmitter}
+     */
+    Emitter;
+
+    /**
      * @type {Events}
      */
     On;
 
     /**
-     * Functions relating to fetching and updating groups
-     * @type {GroupManager}
-     */
-    Groups;
-
-    /**
-     * Functions relating to fetching and updating subscribers
      * @type {SubscriberManager}
      */
     Subscribers;
 
-    /**
-     * Create a new WOLF Client
-     * @param {string} token Token to use, optional
-     */
     constructor(token = null) {
         this.Token = token ?? this.#GenerateToken();
-        this.Socket = new Socket(this);
+        this.V3 = new IO(this);
+        this.Emitter = new EventEmitter();
+        this.Emitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
+        this.On = new Events(this, this.Emitter);
 
-        this.On = new Events(this);
-
-        this.On.BindEvents(this);
-
-        this.Groups = new GroupManager(this);
-        this.Subscribers = new SubscriberManager(this);
+        this.Subscribers = new SubscriberManager(this, true);
     }
 
     /**
-     * Login to WOLF with the Given Account Credentials
-     * @param {string} email the email to use
-     * @param {string} password the password to use
-     * @param {number} onlineState the targeted online state
-     * @returns {boolean} rather the login was successful or not
+     * Login to WOLF with the given Credentials
+     * @param {string} email the email of the account
+     * @param {string} password the password of the account
+     * @param {number} onlineState the onlineState to use
      */
     Login = async (email, password, onlineState = 1) => {
-        let response = await AuthRequests.Login(this.Socket, email, password, onlineState);
+        try {
+            let resp = await Requests.SecurityLogin(this.V3, email, password, onlineState);
+        
+            const { code, headers, body } = resp;
+            
+            if (code !== 200) {
+                const { subcode } = headers;
+                this.On.Security.LoginFailed(subcode);
+                return false;
+            }
+            
+            const { cognito, subscriber } = body;
+            this.On.Security.TokenRefreshed(cognito);
 
-        if (response.code !== 200) {
-            this.On.LoginFailed(response.headers.subCode);
-            return false;
-        }
+            // Fetch the Subscriber
+            let authUser = await this.Subscribers.GetSubscriber(subscriber.id);
 
-        this.AuthUser = await this.Subscribers.Get(response.body.id);
-
-        this.On.LoginSuccess(this.AuthUser);
-
-        return true;
+            this.On.Security.LoginSuccess(authUser);
+            return true;
+        } catch { return false; };
     }
 
     /**
      * Logout from WOLF
-     * @returns {boolean} rather the logout was successful or not
      */
     Logout = async () => {
-        let response = await AuthRequests.Logout(this.Socket);
+        try {
+            let resp = await Requests.SecurityLogout(this.V3);
 
-        return response.code === 200;
+            console.log(resp);
+        } catch (e) { console.log(e) };
     }
 
     /**
-     * Generate a Token to use with this session
-     * @returns {string}
+     * Generate a Token
      */
     #GenerateToken = () => {
         let d = new Date().getTime();
