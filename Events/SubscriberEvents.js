@@ -42,7 +42,7 @@ module.exports = class Events {
      * Emit the Subscriber Profile Fetched Event
      * @returns {(subscriber: Subscriber) => boolean}
      */
-    get Fetched() { return (subscriber) => this.#Emitter.emit('subscriber profile', fn); };
+    get Fetched() { return (subscriber) => this.#Emitter.emit('subscriber profile', subscriber); };
 
     /**
      * Emit the Subscriber Profile Updates Event
