@@ -1,10 +1,10 @@
 const Events = require('./Events');
 const { EventEmitter } = require('events');
+const GroupManager = require('./Managers/GroupManager');
 const IO = require('./Network/IO/IO');
 let Requests = require('./Network/IO/Requests');
 let SubscriberManager = require('./Managers/SubscriberManager');
 const Subscriber = require('./Models/Subscriber/Subscriber');
-const { assign } = require('./Managers/util');
 
 module.exports = class Client {
     /**
@@ -34,6 +34,11 @@ module.exports = class Client {
     On;
 
     /**
+     * @type {GroupManager}
+     */
+    Groups;
+
+    /**
      * @type {SubscriberManager}
      */
     Subscribers;
@@ -46,6 +51,7 @@ module.exports = class Client {
         this.On = new Events(this, this.Emitter);
 
         this.Subscribers = new SubscriberManager(this);
+        this.Groups = new GroupManager(this);
     }
 
     /**

@@ -11,7 +11,7 @@ let assign = (target, source) => {
             if (keys[key.toLowerCase()]) {
                 target[keys[key.toLowerCase()]] = source[key];
             }
-        } catch (e) { console.log(key, !keys[key.toLowerCase()], e); }
+        } catch { }
     });
     return target;
 }
