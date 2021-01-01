@@ -47,4 +47,18 @@ module.exports = class SubscriberManager {
             return response.map(t => assign(new Subscriber(), t));
         } catch { return []; }
     }
+
+    /**
+     * Update the Current Client's Subscriber's Profile
+     * @param {{nickname?: string, status?: string, extended?: { name?: string, about?: string, gender?: number, lookingFor?: number, relationship?: number, langugae?: number, urls?: string[], dateOfBirth?: number}}} data
+     */
+    UpdateSubscriber = async (data) => {
+        try {
+            let response = await Requests.SubscriberUpdate(this.#Client.V3, data);
+
+            console.log(response);
+
+            return true;
+        } catch { return false; }
+    }
 }
