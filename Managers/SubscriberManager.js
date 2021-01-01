@@ -54,10 +54,7 @@ module.exports = class SubscriberManager {
      */
     UpdateSubscriber = async (data) => {
         try {
-            let response = await Requests.SubscriberUpdate(this.#Client.V3, data);
-
-            console.log(response);
-
+            await Requests.SubscriberUpdate(this.#Client.V3, data);
             return true;
         } catch { return false; }
     }

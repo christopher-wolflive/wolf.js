@@ -42,10 +42,13 @@ module.exports = class Events {
                 let cognito = await Requests.SecurityTokenRefresh(this.#Client.V3);
                 this.#Client.On.Security.TokenRefreshed(cognito);
 
-                subscriber = assign(new Subscriber(), loggedInUser);
+                // Fetch the Current Subsciber and subscribe to updates to self
+                subscriber = await this.Subscribers.GetSubscriber(subscriber.id, true, true);
+
+                this.#Client.CurrentUser = subscriber;
                 
                 this.#Client.On.Security.LoginSuccess(subscriber);
-            } catch (e) { console.log(e); }
+            } catch { }
         }
     }
 }
