@@ -63,6 +63,10 @@ module.exports = class IO {
 
         let responses = await asyncPool(3, chunks, req);
 
-        return responses;
+        responses = responses
+            .reduce((resps, resp) => { resps.push(...Object.values(resp.body)); return resps; }, [])
+            .reduce((subs, sub) => { if (sub.code === 200) subs.push(sub.body); return subs; }, []);
+
+        resolve(responses);
     });
 }

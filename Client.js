@@ -72,7 +72,7 @@ module.exports = class Client {
 
             this.On.Security.LoginSuccess(subscriber);
             return true;
-        } catch (e) { console.log(e); return false; };
+        } catch { return false; };
     }
 
     /**

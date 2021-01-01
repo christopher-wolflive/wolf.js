@@ -19,20 +19,32 @@ module.exports = class SubscriberManager {
     
 
     /**
-     * 
+     * Get a Subscriber by their ID
      * @param {number} id the id of the subscriber
      * @param {boolean} extended fetch the extended portion of the subscriber profile
      * @param {boolean} subscribe subscribe to updates to this subscriber's profile
+     * @returns {Subscriber}
      */
     GetSubscriber = async (id, extended = false, subscribe = false) => {
         try {
             let response = await Requests.SubscriberProfile(this.#Client.V3, id, extended, subscribe);
 
-            let subscriber = assign(new Subscriber(), response.body);
+            return assign(new Subscriber(), response.body);
+        } catch { return null }
+    }
 
-            console.log(subscriber);
+    /**
+    * Get Subscribers by their IDs
+    * @param {number[]} idList the id of the subscriber
+    * @param {boolean} extended fetch the extended portion of the subscriber profile
+    * @param {boolean} subscribe subscribe to updates to this subscriber's profile
+    * @returns {Subscriber[]}
+    */
+    GetSubscribers = async (idList, extended = false, subscribe = false) => {
+        try {
+            let response = await Requests.SubscriberProfiles(this.#Client.V3, idList, extended, subscribe);
 
-            return response;
-        } catch (e) { console.log(e); return null }
+            return response.map(t => assign(new Subscriber(), t));
+        } catch { return []; }
     }
 }
