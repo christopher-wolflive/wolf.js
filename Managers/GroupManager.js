@@ -24,15 +24,29 @@ module.exports = class GroupManager {
      * @param {boolean} subscribe 
      * @returns {Group}
      */
-    GetGroup = async (nameOrId, entities, subscribe) => {
+    GetGroup = async(nameOrId, entities = ['base', 'extended', 'audioConfig', 'audioCounts'], subscribe = false) => {
         try {
             let response = await Requests.GroupProfile(this.#Client.V3, nameOrId, entities, subscribe);
 
             let { base, extended, audioConfig, audioCounts } = response.body;
 
             return assign(new Group, { ...base, extended, audioConfig, audioCounts });
-        } catch { return null }
+        } catch { return null };
     }
 
-    GetGroups = async (idList, entities, subscribe)
+    /**
+     * Get Groups by their IDs
+     * @param {number[]} idList the list of groups ids
+     * @param {*} entities the entities to fetch
+     * @param {*} subscribe subscribe to changes to the group profiles
+     */
+    GetGroups = async (idList, entities = ['base', 'extended', 'audioConfig', 'audioCounts'], subscribe = false) => {
+        try {
+            let response = await Requests.GroupProfiles(this.#Client.V3, idList, entities, subscribe);
+            
+            let groups = response.map(t => { return assign(new Group, { ...t.base, extended: t.extended, audioConfig: t.audioConfig, audioCounts: t.audioCounts }) });
+
+            return groups;
+        } catch { return []; };
+    }
 }
