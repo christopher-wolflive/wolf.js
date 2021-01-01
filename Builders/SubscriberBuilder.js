@@ -11,12 +11,9 @@ module.exports = class SubscriberBuilder {
     #AddOrUpdate = (key, value, extended = false) => {
         if (extended && !this.Data.extended)
             this.Data.extended = {};
-        
-        if (extended)
-            this.Data.extended = { ...this.Data.extended, [key]: value };
-        else
-            this.Data = { ...this.Data, [key]: value };
-        
+
+        (extended ? this.Data.extended : this.Data)[key] = item;
+
         return this;
     }
     /**

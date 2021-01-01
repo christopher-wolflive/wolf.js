@@ -50,7 +50,7 @@ module.exports = class Events {
      */
     get Updated() { return (subscriberId) => this.#Emitter.emit('subscriber update', subscriberId); };
 
-    #OnUpdate = (data) => {
+    #OnUpdate = async (data) => {
         let { id } = data.body;
 
         if (this.#Client.CurrentUser.Id === id)
