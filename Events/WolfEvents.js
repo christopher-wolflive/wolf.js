@@ -1,6 +1,8 @@
+const { assign } = require('../Managers/util');
 const Client = require('../Client');
 const { EventEmitter } = require('events');
 const Requests = require('../Network/IO/Requests');
+const Subscriber = require('../Models/Subscriber/Subscriber');
 
 module.exports = class Events {
     /**
@@ -32,7 +34,7 @@ module.exports = class Events {
     set Welcome(fn) { this.#Client.V3.Conn.on('welcome', fn); };
 
     #OnWelcome = async (data) => {
-        const { endpointConfig, loggedInUser } = data;
+        let { endpointConfig, loggedInUser } = data;
 
         if (loggedInUser) {
             try {
@@ -40,12 +42,9 @@ module.exports = class Events {
                 let cognito = await Requests.SecurityTokenRefresh(this.#Client.V3);
                 this.#Client.On.Security.TokenRefreshed(cognito);
 
-                // Fetch the Subscriber
-                let subscriber = await Requests.SubscriberProfile(this.#Client.V3, loggedInUser.id);
-
-                let { body: sub } = subscriber;
+                subscriber = assign(new Subscriber(), loggedInUser);
                 
-                this.#Client.On.Security.LoginSuccess(sub);
+                this.#Client.On.Security.LoginSuccess(subscriber);
             } catch (e) { console.log(e); }
         }
     }

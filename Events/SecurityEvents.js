@@ -1,5 +1,6 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
+const Subscriber = require('../Models/Subscriber/Subscriber');
 
 module.exports = class Events {
     /**
@@ -30,7 +31,7 @@ module.exports = class Events {
     
     /**
      * Raise an event when logged in successfully
-     * @param {(subscriber: any) => void} fn
+     * @param {(subscriber: Subscriber) => void} fn
      */
     set LoginSuccess(fn) { this.#Emitter.on('security login success', fn); };
 
@@ -48,7 +49,7 @@ module.exports = class Events {
     
     /**
      * Emit the Secuirty Login Success Event
-     * @returns {(subscriber: any) => boolean}
+     * @returns {(subscriber: Subscriber) => boolean}
      */
     get LoginSuccess() { return (subscriber) => this.#Emitter.emit('security login success', subscriber); };
 

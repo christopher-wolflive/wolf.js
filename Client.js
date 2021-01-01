@@ -3,12 +3,19 @@ const { EventEmitter } = require('events');
 const IO = require('./Network/IO/IO');
 let Requests = require('./Network/IO/Requests');
 let SubscriberManager = require('./Managers/SubscriberManager');
+const Subscriber = require('./Models/Subscriber/Subscriber');
+const { assign } = require('./Managers/util');
 
 module.exports = class Client {
     /**
      * @type {string}
      */
     Token;
+
+    /**
+     * @type {Subscriber}
+     */
+    CurrentUser;
 
     /**
      * @type {IO}
@@ -38,7 +45,7 @@ module.exports = class Client {
         this.Emitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
         this.On = new Events(this, this.Emitter);
 
-        this.Subscribers = new SubscriberManager(this, true);
+        this.Subscribers = new SubscriberManager(this);
     }
 
     /**
@@ -51,7 +58,7 @@ module.exports = class Client {
         try {
             let resp = await Requests.SecurityLogin(this.V3, email, password, onlineState);
         
-            const { code, headers, body } = resp;
+            let { code, headers, body } = resp;
             
             if (code !== 200) {
                 const { subcode } = headers;
@@ -59,15 +66,13 @@ module.exports = class Client {
                 return false;
             }
             
-            const { cognito, subscriber } = body;
-            this.On.Security.TokenRefreshed(cognito);
+            let { cognito, subscriber } = body;
 
-            // Fetch the Subscriber
-            let authUser = await this.Subscribers.GetSubscriber(subscriber.id);
+            subscriber = assign(new Subscriber(), subscriber);
 
-            this.On.Security.LoginSuccess(authUser);
+            this.On.Security.LoginSuccess(subscriber);
             return true;
-        } catch { return false; };
+        } catch (e) { console.log(e); return false; };
     }
 
     /**

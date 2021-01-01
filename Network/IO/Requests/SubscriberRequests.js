@@ -8,7 +8,7 @@ module.exports = class SubscriberRequests {
      * @param {boolean} extended fetch the extended portion of the subscriber's profile
      * @param {booleam} subscribe subscribe to changes to this subscriber's profile
      */
-    static SubscriberProfile = async (io, id, extended = true, subscribe = true) => await io.Emit('subscriber profile', {
+    static SubscriberProfile = async (io, id, extended, subscribe) => await io.Emit('subscriber profile', {
         headers: { version: 4 },
         body: {
             id,
