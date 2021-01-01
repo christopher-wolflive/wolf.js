@@ -29,7 +29,7 @@ module.exports = class SubscriberManager {
         try {
             let response = await Requests.SubscriberProfile(this.#Client.V3, id, extended, subscribe);
 
-            return assign(new Subscriber(), response.body);
+            return assign(new Subscriber, response.body);
         } catch { return null }
     }
 
@@ -44,7 +44,7 @@ module.exports = class SubscriberManager {
         try {
             let response = await Requests.SubscriberProfiles(this.#Client.V3, idList, extended, subscribe);
 
-            return response.map(t => assign(new Subscriber(), t));
+            return response.map(t => assign(new Subscriber, t));
         } catch { return []; }
     }
 
