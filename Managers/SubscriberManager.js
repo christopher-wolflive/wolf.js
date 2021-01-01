@@ -28,8 +28,9 @@ module.exports = class SubscriberManager {
     GetSubscriber = async (id, extended = false, subscribe = false) => {
         try {
             let response = await Requests.SubscriberProfile(this.#Client.V3, id, extended, subscribe);
-
-            return assign(new Subscriber, response.body);
+            let sub = assign(new Subscriber, response.body);
+            this.#Client.On.Subscriber.Fetched(sub);
+            return sub;
         } catch { return null }
     }
 
@@ -43,11 +44,15 @@ module.exports = class SubscriberManager {
     GetSubscribers = async (idList, extended = false, subscribe = false) => {
         try {
             let response = await Requests.SubscriberProfiles(this.#Client.V3, idList, extended, subscribe);
-
+            let subs = response.map(t => assign(new Subscriber, t));
+            subs.forEach(sub => this.#Client.On.Subscriber.Fetched(sub));
             return response.map(t => assign(new Subscriber, t));
-        } catch { return []; }
+        } catch (e) { console.log(e); return []; }
     }
 
+    /**
+     * Get Subscriber Settings
+     */
     GetSettings = async () => {
         try {
             return await Requests.SubscriberSettings(this.#Client.V3);
