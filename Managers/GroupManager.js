@@ -30,7 +30,11 @@ module.exports = class GroupManager {
 
             let { base, extended, audioConfig, audioCounts } = response.body;
 
-            return assign(new Group, { ...base, extended, audioConfig, audioCounts });
+            let group = assign(new Group, { ...base, extended, audioConfig, audioCounts });
+
+            this.#Client.On.Groups.Fetched(group);
+
+            return group;
         } catch { return null };
     }
 
@@ -45,6 +49,7 @@ module.exports = class GroupManager {
             let response = await Requests.GroupProfiles(this.#Client.V3, idList, entities, subscribe);
             
             let groups = response.map(t => { return assign(new Group, { ...t.base, extended: t.extended, audioConfig: t.audioConfig, audioCounts: t.audioCounts }) });
+            groups.forEach(group => this.#Client.On.Groups.Fetched(group));
 
             return groups;
         } catch { return []; };
