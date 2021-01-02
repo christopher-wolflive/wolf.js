@@ -2,6 +2,7 @@ const Events = require('./Events');
 const { EventEmitter } = require('events');
 const GroupManager = require('./Managers/GroupManager');
 const IO = require('./Network/IO/IO');
+const MessageManager = require('./Managers/MessageManager');
 let Requests = require('./Network/IO/Requests');
 let SubscriberManager = require('./Managers/SubscriberManager');
 const Subscriber = require('./Models/Subscriber/Subscriber');
@@ -40,6 +41,11 @@ module.exports = class Client {
     Groups;
 
     /**
+     * @type {MessageManager}
+     */
+    Messages;
+
+    /**
      * @type {SubscriberManager}
      */
     Subscribers;
@@ -57,10 +63,9 @@ module.exports = class Client {
         this.Emitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
         this.On = new Events(this, this.Emitter);
 
-        this.Subscribers = new SubscriberManager(this);
         this.Groups = new GroupManager(this);
-
-        this.Achievements = new AchievementManager(this);
+        this.Messages = new MessageManager(this);
+        this.Subscribers = new SubscriberManager(this);
     }
 
     /**
