@@ -21,6 +21,8 @@ module.exports = class Events {
     constructor(client, emitter) {
         this.#Client = client;
         this.#Emitter = emitter;
+        
+        this.#Client.V3.Conn.on('group update', this.#OnUpdate);
     }
 
     /**
@@ -46,4 +48,10 @@ module.exports = class Events {
      * @returns {(groupId: number) => booleam}
      */
     get Updated() { return (groupId) => this.#Emitter.emit('group update', groupId); };
+
+    #OnUpdate = async (data) => {
+        let { id } = data.body;
+
+        this.Updated(id);
+    }
 }
