@@ -35,6 +35,11 @@ module.exports = class Message {
      * @type {string | Buffer}
      */
     Data = undefined;
+
+    /**
+     * @type {string}
+     */
+    Content;
     
     /**
      * @type {string}
