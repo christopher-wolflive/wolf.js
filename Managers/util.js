@@ -5,7 +5,7 @@ let assign = (target, source) => {
             if (!source[key])
                 return;
             
-            if (typeof source[key] === 'object' && !Array.isArray(source[key]))
+            if (typeof source[key] === 'object' && !Array.isArray(source[key]) && !typeof source[key] === 'undefined')
                 return assign(target[keys[key.toLowerCase()]], source[key]);
         
             if (keys[key.toLowerCase()]) {
