@@ -43,6 +43,6 @@ module.exports = class MessageManager {
             this.#Client.On.Message.Sent(mesg);
 
             return true;
-        } catch (e) { console.log(e); return false;}
+        } catch { return false;}
     }
 }
