@@ -94,13 +94,24 @@ module.exports = class GroupManager {
     }
 
     /**
-     * 
-     * @param {} id 
-     * @param {*} data 
+     * Update a Group's Profile
+     * @param {number} id the id of the group to update
+     * @param {any} data the data to update the group with
      */
     UpdateGroup = async (id, data) => {
         try {
             await Requests.GroupUpdate(this.#Client.V3, id, data);
+            return true;
+        } catch { return false; }
+    }
+
+    /**
+     * Create a Group
+     * @param {any} data the data to create the group with 
+     */
+    CreateGroup = async (data) => {
+        try {
+            await Requests.GroupCreate(this.#Client.V3, data);
             return true;
         } catch { return false; }
     }
