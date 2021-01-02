@@ -1,6 +1,7 @@
 const { assign } = require('./util');
 const Client = require('../Client');
 const Requests = require('../Network/IO/Requests');
+const Message = require('../Models/Message/Message');
 
 module.exports = class MessageManager {
     /**
@@ -29,7 +30,7 @@ module.exports = class MessageManager {
 
             let { uuid: id, timestamp } = resp.body;
 
-            let mesg = {
+            let mesg = assign(new Message, {
                 id,
                 timestamp,
                 recipient: { id: recipient, hash: '' },
@@ -37,9 +38,9 @@ module.exports = class MessageManager {
                 isGroup,
                 data,
                 mimeType
-            };
+            });
 
-            console.log(mesg);
+            this.#Client.On.Message.Sent(mesg);
 
             return true;
         } catch (e) { console.log(e); return false;}

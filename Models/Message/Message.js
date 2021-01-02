@@ -9,12 +9,12 @@ module.exports = class Message {
     /**
      * @type {GenericSimple}
      */
-    Recipient;
+    Recipient = new GenericSimple;
     
     /**
      * @type {GenericSimple}
      */
-    Originator;
+    Originator = new GenericSimple;
     
     /**
      * @type {boolean}
