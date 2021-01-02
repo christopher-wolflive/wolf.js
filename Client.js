@@ -5,6 +5,7 @@ const IO = require('./Network/IO/IO');
 let Requests = require('./Network/IO/Requests');
 let SubscriberManager = require('./Managers/SubscriberManager');
 const Subscriber = require('./Models/Subscriber/Subscriber');
+const AchievementManager = require('./Managers/AchievementManager')
 
 module.exports = class Client {
     /**
@@ -43,6 +44,12 @@ module.exports = class Client {
      */
     Subscribers;
 
+    /**
+     * 
+     * @type {AchievementManager}
+     */
+    Achievements;
+
     constructor(token = null) {
         this.Token = token ?? this.#GenerateToken();
         this.V3 = new IO(this);
@@ -52,6 +59,8 @@ module.exports = class Client {
 
         this.Subscribers = new SubscriberManager(this);
         this.Groups = new GroupManager(this);
+
+        this.Achievements = new AchievementManager(this);
     }
 
     /**
