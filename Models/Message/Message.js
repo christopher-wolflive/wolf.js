@@ -32,9 +32,9 @@ module.exports = class Message {
     MimeType;
     
     /**
-     * @type {Buffer}
+     * @type {string | Buffer}
      */
-    Data;
+    Data = undefined;
     
     /**
      * @type {string}
