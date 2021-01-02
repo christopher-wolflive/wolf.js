@@ -66,6 +66,7 @@ module.exports = class Client {
         this.Groups = new GroupManager(this);
         this.Messages = new MessageManager(this);
         this.Subscribers = new SubscriberManager(this);
+        this.Achievements = new AchievementManager(this);
     }
 
     /**
