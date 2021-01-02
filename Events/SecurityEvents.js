@@ -1,6 +1,7 @@
 const Client = require('../Client');
 const { EventEmitter } = require('events');
 const Subscriber = require('../Models/Subscriber/Subscriber');
+const Requests = require('../Network/IO/Requests');
 
 module.exports = class Events {
     /**
@@ -21,6 +22,8 @@ module.exports = class Events {
     constructor(client, emitter) {
         this.#Client = client;
         this.#Emitter = emitter;
+
+        this.LoginSuccess = this.#OnLoginSuccess;
     }
     
     /**
@@ -58,4 +61,19 @@ module.exports = class Events {
      * @returns {(cognito: { identity: string, token: string}) => boolean}
      */
     get TokenRefreshed() { return (cognito) => this.#Emitter.emit('security token refreshed', cognito); };
+
+    /**
+     * Handle the OnLoginSuccess Stuff
+     * @param {Subscriber} subscriber 
+     */
+    #OnLoginSuccess = async (subscriber) => {
+        try {
+            // Subscribe to Messages
+            let mgs = await Requests.MessageGroupSubscribe(this.#Client.V3);
+            let mps = await Requests.MessagePrivateSubscribe(this.#Client.V3);
+
+            // Emit the Ready Event
+            this.#Client.On.SDK.Ready();
+        } catch { }
+    }
 }
