@@ -21,6 +21,7 @@ const TippingEvents = require('./TippingEvents');
 const WolfEvents = require('./WolfEvents');
 
 module.exports = class Events {
+    Groups;
     IO;
     SDK;
     Security;
@@ -33,6 +34,7 @@ module.exports = class Events {
      * @param {EventEmitter} emitter the client's emitter
      */
     constructor(client, emitter) {
+        this.Groups = new GroupEvents(client, emitter);
         this.IO = new IOEvents(client, emitter);
         this.SDK = new SDKEvents(client, emitter);
         this.Security = new SecurityEvents(client, emitter);
