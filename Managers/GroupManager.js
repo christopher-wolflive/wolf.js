@@ -92,4 +92,16 @@ module.exports = class GroupManager {
             return stats;
         } catch { return null; };
     }
+
+    /**
+     * 
+     * @param {} id 
+     * @param {*} data 
+     */
+    UpdateGroup = async (id, data) => {
+        try {
+            await Requests.GroupUpdate(this.#Client.V3, id, data);
+            return true;
+        } catch { return false; }
+    }
 }
