@@ -23,6 +23,7 @@ const WolfEvents = require('./WolfEvents');
 module.exports = class Events {
     Groups;
     IO;
+    Message;
     SDK;
     Security;
     Subscriber;
@@ -36,6 +37,7 @@ module.exports = class Events {
     constructor(client, emitter) {
         this.Groups = new GroupEvents(client, emitter);
         this.IO = new IOEvents(client, emitter);
+        this.Message = new MessageEvents(client, emitter);
         this.SDK = new SDKEvents(client, emitter);
         this.Security = new SecurityEvents(client, emitter);
         this.Subscriber = new SubscriberEvents(client, emitter);
