@@ -34,7 +34,7 @@ module.exports = class Message {
     /**
      * @type {string | Buffer}
      */
-    Data = undefined;
+    Data;
 
     /**
      * @type {string}
@@ -49,5 +49,5 @@ module.exports = class Message {
     /**
      * @type {}
      */
-    MetaData;
+    MetaData = {}
 }
