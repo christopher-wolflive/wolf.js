@@ -48,7 +48,7 @@ module.exports = class Events {
                 this.#Client.CurrentUser = subscriber;
                 
                 this.#Client.On.Security.LoginSuccess(subscriber);
-            } catch (e) { console.log(e); }
+            } catch () { }
         }
     }
 }

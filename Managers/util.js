@@ -7,10 +7,10 @@ let assign = (target, source) => {
                     return assign(target[keys[key.toLowerCase()]], source[key]);
         
                 target[keys[key.toLowerCase()] ?? key] = source[key];
-            } catch (e) { console.log(key, e); };
+            } catch { };
         });
         return target;
-    } catch (e) { console.log('General Error', e); }
+    } catch { }
 }
 
 module.exports = { 
