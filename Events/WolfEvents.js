@@ -43,12 +43,12 @@ module.exports = class Events {
                 this.#Client.On.Security.TokenRefreshed(cognito);
 
                 // Fetch the Current Subsciber and subscribe to updates to self
-                subscriber = await this.Subscribers.GetSubscriber(subscriber.id, true, true);
+                let subscriber = await this.#Client.Subscribers.GetSubscriber(loggedInUser.id, true, true);
 
                 this.#Client.CurrentUser = subscriber;
                 
                 this.#Client.On.Security.LoginSuccess(subscriber);
-            } catch { }
+            } catch (e) { console.log(e); }
         }
     }
 }
