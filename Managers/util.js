@@ -1,19 +1,16 @@
 let assign = (target, source) => {
-    let keys = Object.keys(target).reduce((keys, key) => { keys[key.toLowerCase()] = key; return keys; }, {});
-    Object.keys(source).forEach(key => {
-        try {
-            if (!source[key])
-                return;
-            
-            if (typeof source[key] === 'object' && !Array.isArray(source[key]) && !typeof source[key] === 'undefined')
-                return assign(target[keys[key.toLowerCase()]], source[key]);
+    try {
+        let keys = Object.keys(target).reduce((keys, key) => { keys[key.toLowerCase()] = key; return keys; }, {});
+        Object.keys(source).forEach(key => {
+            try {
+                if (typeof source[key] === 'object' && !Array.isArray(source[key]) && !Buffer.isBuffer(source[key]))
+                    return assign(target[keys[key.toLowerCase()]], source[key]);
         
-            if (keys[key.toLowerCase()]) {
-                target[keys[key.toLowerCase()]] = source[key];
-            }
-        } catch { }
-    });
-    return target;
+                target[keys[key.toLowerCase()] ?? key] = source[key];
+            } catch (e) { console.log(key, e); };
+        });
+        return target;
+    } catch (e) { console.log('General Error', e); }
 }
 
 module.exports = { 
