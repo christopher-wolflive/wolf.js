@@ -18,7 +18,7 @@ module.exports = class AchievementManager {
     GetAllAchievements = async() => {
         try {
             let charmList = await Requests.AchievementList();
-            return charmList.body;
+            return charmList;
         } catch {return null}
     }
 }
