@@ -8,7 +8,7 @@ const io = require('socket.io-client');
 module.exports = class IO {
 
     /**
-     * @type {Client}200 
+     * @type {Client}
      */
     Client;
 
