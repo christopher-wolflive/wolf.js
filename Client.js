@@ -61,12 +61,13 @@ module.exports = class Client {
         this.V3 = new IO(this);
         this.Emitter = new EventEmitter();
         this.Emitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
-        this.On = new Events(this, this.Emitter);
 
         this.Groups = new GroupManager(this);
         this.Messages = new MessageManager(this);
         this.Subscribers = new SubscriberManager(this);
         this.Achievements = new AchievementManager(this);
+
+        this.On = new Events(this, this.Emitter);
     }
 
     /**
