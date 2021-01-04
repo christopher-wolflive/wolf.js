@@ -9,7 +9,9 @@ module.exports = class AchievementManager {
 
     /**
      * Crate a new AchievementManager
-     * @param {Client} client 
+     * @param {Client} client
+     * @param {number[]} idList the list of achievement ids
+     * @param {number} languageId the langauge to get the names and descriptions localized in
      */
     constructor(client) {
         this.#Client = client;
@@ -19,9 +21,9 @@ module.exports = class AchievementManager {
      * returns array of charm lists
      * @returns {Promise<*|null>}
      */
-    AchievementList = async() => {
+    AchievementList = async(idList = null, languageId = 1) => {
         try {
-            return await Requests.AchievementList(this.#Client.V3);
+            return await Requests.AchievementList(this.#Client.V3, idList, languageId);
         } catch { }
     }
 
