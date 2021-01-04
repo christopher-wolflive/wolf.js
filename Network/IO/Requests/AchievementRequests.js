@@ -19,12 +19,12 @@ module.exports = class AchievementRequests {
     /**
      * Request achievements for a subscriber
      * @param {IO} io the socket.io client to send this request through
-     * @param {number} subscriberId the id of the subscriber
+     * @param {number} id the id of the subscriber
      * @param {number} parentId the id of the parent achievement=
      * @param {string} order criteria to oder the result
      */
-    static AchievementSubscriberList = async (io, subscriberId, parentId = null, order = null) => await io.Emit('achievement subscriber list', (() => {
-        let data = { subscriberId };
+    static AchievementSubscriberList = async (io, id, parentId = null, order = null) => await io.Emit('achievement subscriber list', (() => {
+        let data = { id };
 
         if (parentId) data.parentId = parentId;
         if (order) data.order = order;
