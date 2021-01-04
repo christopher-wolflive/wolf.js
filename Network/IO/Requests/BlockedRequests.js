@@ -7,7 +7,7 @@ module.exports = class BlockedRequests {
      * @param {IO} io the socket.io client to send this request through 
      * @param {boolean} subscribe subscribe to updates to the block list
      */
-    static SubsscriberBlockList = async (io, subscribe = false) => await io.Emit('subscriber block list', { subscribe });
+    static SubscriberBlockList = async (io, subscribe = false) => await io.Emit('subscriber block list', { subscribe });
 
     /**
      * Block a subscriber
