@@ -38,3 +38,8 @@ class GroupMember {
      */
     AdditionalInfo = new GroupMemberAdditionalInformation;
 }
+
+module.exports = {
+    GroupMemberAdditionalInformation,
+    GroupMember
+}

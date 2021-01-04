@@ -10,3 +10,7 @@ class GenericSimple {
      */
     Hash;
 }
+
+module.exports = {
+    GenericSimple
+}

@@ -6,6 +6,10 @@ const CreditModels = require('./CreditModels');
 const DiscoverModels = require('./DiscoverModels');
 const EventModels = require('./EventModels');
 const GenericModels = require('./GenericModels');
+const GroupMemberModels = require('./GroupMemberModels');
+const GroupModels = require('./GroupModels');
+const MessageModels = require('./MessageModels');
+const SearchModels = require('./SearchModels');
 
 module.exports = {
     ...AchievementModels,
@@ -16,4 +20,8 @@ module.exports = {
     ...DiscoverModels,
     ...EventModels,
     ...GenericModels,
+    ...GroupMemberModels,
+    ...GroupModels,
+    ...MessageModels,
+    ...SearchModels
 }
