@@ -57,5 +57,5 @@ module.exports = class GroupRequests {
      * @param {number} id the id of the group to update
      * @param {data} data the data to update the group with
      */
-    static GroupUpdate = async (io, id, data) => await io.Emit('group profile update', { id, ...data });
+    static GroupProfileUpdate = async (io, id, data) => await io.Emit('group profile update', { id, ...data });
 }
