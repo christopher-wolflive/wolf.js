@@ -15,10 +15,21 @@ module.exports = class AchievementManager {
         this.#Client = client;
     }
 
-    GetAllAchievements = async() => {
+    /**
+     * returns array of charm lists
+     * @returns {Promise<*|null>}
+     */
+    AchievementList = async() => {
         try {
-            let charmList = await Requests.AchievementList();
-            return charmList;
-        } catch {return null}
+            return await Requests.AchievementList(this.#Client.V3);
+        } catch { }
+    }
+
+    AchievementSubscriberList = async (subscriberId, parentId = null, order = null) => {
+        try {
+            return  await Requests.AchievementSubscriberList(this.#Client.V3, subscriberId, parentId, order);
+        } catch (e) {
+            console.log(e)
+        }
     }
 }
