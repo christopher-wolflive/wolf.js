@@ -1,4 +1,4 @@
-module.exports = class GenericSimple {
+class GroupDiscoveryList {
     
     /**
      * @type {number}
@@ -9,4 +9,9 @@ module.exports = class GenericSimple {
      * @type {string}
      */
     Hash;
+    
+    /**
+     * @type {number}
+     */
+    Weight;
 }
