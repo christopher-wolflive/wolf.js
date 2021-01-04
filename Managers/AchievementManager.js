@@ -28,8 +28,6 @@ module.exports = class AchievementManager {
     AchievementSubscriberList = async (subscriberId, parentId = null, order = null) => {
         try {
             return  await Requests.AchievementSubscriberList(this.#Client.V3, subscriberId, parentId, order);
-        } catch (e) {
-            console.log(e)
-        }
+        } catch { }
     }
 }
