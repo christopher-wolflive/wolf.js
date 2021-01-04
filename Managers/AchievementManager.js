@@ -27,6 +27,12 @@ module.exports = class AchievementManager {
         } catch { }
     }
 
+    /**
+     * Return given users charms.
+     * @param {number} subscriberId 
+     * @param {number} parentId 
+     * @param {number} order 
+     */
     AchievementSubscriberList = async (subscriberId, parentId = null, order = null) => {
         try {
             return  await Requests.AchievementSubscriberList(this.#Client.V3, subscriberId, parentId, order);
