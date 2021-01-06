@@ -1,28 +1,60 @@
 {
-  "name": "wolf.js",
-  "version": "3.0.0-alpha.3",
-  "description": "The Worlds Online Festival API",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/christopher-wolflive/wolf.js.git"
-  },
-  "keywords": [
-    "WOLF",
-    "WOLF.LIVE",
-    "Palringo"
-  ],
-  "author": "Christopher <christopher.koster@wolf.live>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/christopher-wolflive/wolf.js/issues"
-  },
-  "homepage": "https://github.com/christopher-wolflive/wolf.js#readme",
-  "dependencies": {
-    "socket.io-client": "2.3.1",
-    "tiny-async-pool": "^1.2.0"
-  }
+	"name": "wolf.js",
+	"version": "3.0.0-alpha.10",
+	"description": "The Worlds Online Festival Unofficial Node.JS API",
+	"keywords": [
+		"wolf",
+		"wolf live",
+		"wolflive",
+		"wolf.js",
+		"pal",
+		"palringo"
+	],
+	"files": [
+		"dist/",
+		"wrapper.mjs",
+		"!**/*.tsbuildinfo"
+	],
+	"directories": {
+		"doc": "docs/",
+		"example": "example/",
+		"lib": "lib/"
+	},
+	"type": "commonjs",
+	"main": "./dist/index.js",
+	"exports": {
+		"import": "./wrapper.mjs",
+		"require": "./dist/index.js"
+	},
+	"types": "./dist/index.d.ts",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/christopher-wolflive/wolf.js.git"
+	},
+	"scripts": {
+		"compile": "rimraf ./dist && tsc",
+		"format:check": "prettier --check \"lib/**/*.ts\"",
+		"format:fix": "prettier --write \"lib/**/*.ts\""
+	},
+	"devDependencies": {
+		"prettier": "^2.2.1",
+		"rimraf": "^3.0.2",
+		"ts-node": "^9.1.1",
+		"typescript": "^4.1.3"
+	},
+	"dependencies": {
+		"@types/node": "^14.14.20",
+		"@types/socket.io-client": "^1.4.34",
+		"socket.io-client": "^2.3.1"
+	},
+	"contributors": [
+		{
+			"name": "Christopher",
+			"email": "christopher@ecproj.io"
+		}
+	],
+	"engines": {
+		"node": ">=10.0.0"
+	}
 }
